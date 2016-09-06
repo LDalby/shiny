@@ -6,7 +6,7 @@ library(DT)
 library(RColorBrewer)
 
 # Prepare the map of fields
-vejlerne = readOGR(dsn="/Data", layer="Fields")
+vejlerne = readOGR(dsn="Data", layer="Fields")
 vejlerne = spTransform(vejlerne, CRS("+init=epsg:4326"))
 # Find the edges of our map
 bounds<-bbox(vejlerne)
