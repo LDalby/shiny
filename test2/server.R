@@ -19,7 +19,7 @@ server <- function(input, output, session) {
     joinedDataset
   })
 
-  output$map <- renderLeaflet({
+  output$vejlerneMap <- renderLeaflet({
     # Use leaflet() here, and only include aspects of the map that
     # won't need to change dynamically (at least, not unless the
     # entire map is being torn down and recreated).
@@ -59,7 +59,9 @@ server <- function(input, output, session) {
     if (input$legend) {
       pal = colorQuantile("Reds", theData$Numbers, n = 10) 
       proxy %>% addLegend(position = "bottomright",
-        pal = pal, values = quantile(theData$Numbers, probs = seq(0, 1, .1))
+        pal = pal,
+        values = ~Numbers
+        # values = as.numeric(quantile(theData$Numbers, probs = seq(0, 1, .1), na.rm = TRUE))
       )
     }
   })
