@@ -8,14 +8,15 @@ bb = bbox(vejlerne)
 server <- function(input, output, session) {
 
   # Reactive expression for the data subsetted to what the user selected
-  filteredData <- reactive({
-    bag[bag$Year >= input$range[1] & bag$Year <= input$range[2],]
-  })
-
-  # This reactive expression represents the palette function,
-  # which changes as the user makes selections in UI.
-  colorpal <- reactive({
-    colorNumeric(input$colors, bag$Year)
+  getDataSet<-reactive({
+    # Subset based on user input:
+    dataSet<-bag[bag$Year == input$dataYear,]
+    # Copy our GIS data
+    joinedDataset<-vejlerne
+    names(joinedDataset) = "PolyRefNum"    
+    # Join the two datasets together
+    joinedDataset@data <- suppressWarnings(left_join(joinedDataset@data, dataSet, by="PolyRefNum"))
+    joinedDataset
   })
 
   output$map <- renderLeaflet({
@@ -30,27 +31,35 @@ server <- function(input, output, session) {
   # circles when a new color is chosen) should be performed in
   # an observer. Each independent set of things that can change
   # should be managed in its own observer.
-  observe({
-    pal <- colorpal()
-
-    leafletProxy("map", data = filteredData()) %>%
+ observe({
+    theData<-getDataSet() 
+    # colour palette mapped to data
+    pal <- colorQuantile("Reds", theData$Numbers, n = 10) 
+    # set text for the clickable popup labels
+    vejlerne_popup <- paste0("<strong>Numbers Shot: </strong>", 
+                            theData$Numbers)
+    # If the data changes, the polygons are cleared and redrawn, however, the map (above) is not redrawn
+    leafletProxy("vejlerneMap", data = theData) %>%
       clearShapes() %>%
-      addCircles(radius = ~10^mag/10, weight = 1, color = "#777777",
-        fillColor = ~pal(mag), fillOpacity = 0.7, popup = ~paste(mag)
-      )
+      addPolygons(data = theData,
+                  fillColor = pal(theData$Numbers), 
+                  fillOpacity = 0.8, 
+                  color = "#BDBDC3", 
+                  weight = 2,
+                  popup = vejlerne_popup)  
   })
 
   # Use a separate observer to recreate the legend as needed.
   observe({
-    proxy <- leafletProxy("map", data = bag)
-
+    theData = getDataSet()
+    proxy <- leafletProxy("vejlerneMap", data = theData)
     # Remove any existing legend, and only if the legend is
     # enabled, create a new one.
     proxy %>% clearControls()
     if (input$legend) {
-      pal <- colorpal()
+      pal = colorQuantile("Reds", theData$Numbers, n = 10) 
       proxy %>% addLegend(position = "bottomright",
-        pal = pal, values = ~mag
+        pal = pal, values = quantile(theData$Numbers, probs = seq(0, 1, .1))
       )
     }
   })
