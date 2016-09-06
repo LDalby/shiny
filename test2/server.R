@@ -10,7 +10,7 @@ server <- function(input, output, session) {
   # Reactive expression for the data subsetted to what the user selected
   getDataSet<-reactive({
     # Subset based on user input:
-    dataSet<-bag[bag$Year == input$dataYear,]
+    dataSet<-bag[bag$Year == input$year,]
     # Copy our GIS data
     joinedDataset<-vejlerne
     names(joinedDataset) = "PolyRefNum"    
@@ -34,7 +34,7 @@ server <- function(input, output, session) {
  observe({
     theData<-getDataSet() 
     # colour palette mapped to data
-    pal <- colorQuantile("Reds", theData$Numbers, n = 10) 
+    pal <- colorQuantile("Greens", theData$Numbers, n = 10) 
     # set text for the clickable popup labels
     vejlerne_popup <- paste0("<strong>Numbers Shot: </strong>", 
                             theData$Numbers)
@@ -50,21 +50,21 @@ server <- function(input, output, session) {
   })
 
   # Use a separate observer to recreate the legend as needed.
-  observe({
-    theData = getDataSet()
-    proxy <- leafletProxy("vejlerneMap", data = theData)
-    # Remove any existing legend, and only if the legend is
-    # enabled, create a new one.
-    proxy %>% clearControls()
-    if (input$legend) {
-      pal = colorQuantile("Reds", theData$Numbers, n = 10) 
-      proxy %>% addLegend(position = "bottomright",
-        pal = pal,
-        values = ~Numbers
-        # values = as.numeric(quantile(theData$Numbers, probs = seq(0, 1, .1), na.rm = TRUE))
-      )
-    }
-  })
+  # observe({
+  #   theData = getDataSet()
+  #   proxy <- leafletProxy("vejlerneMap", data = theData)
+  #   # Remove any existing legend, and only if the legend is
+  #   # enabled, create a new one.
+  #   proxy %>% clearControls()
+  #   if (input$legend) {
+  #     pal = colorQuantile("Reds", theData$Numbers, n = 10) 
+  #     proxy %>% addLegend(position = "bottomright",
+  #       pal = pal,
+  #       values = ~Numbers
+  #       # values = as.numeric(quantile(theData$Numbers, probs = seq(0, 1, .1), na.rm = TRUE))
+  #     )
+  #   }
+  # })
 }
 
 # shinyApp(ui, server)
