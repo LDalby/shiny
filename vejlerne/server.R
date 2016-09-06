@@ -55,7 +55,7 @@ function(input, output, session){
                   weight = 2,
                   popup = vejlerne_popup)  
   })
-  # year selecter; values based on those present in the dataset
+  # Select year from range in data:
   output$yearSelect<-renderUI({
     yearRange<-sort(unique(as.numeric(bag$Year)), decreasing=FALSE)
     selectInput("dataYear", "Year", choices=yearRange, selected=yearRange[1])
