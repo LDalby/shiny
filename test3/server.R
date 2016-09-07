@@ -50,9 +50,9 @@ server <- function(input, output, session) {
       clearShapes() %>%
       addPolygons(data = theData,
                   fillColor = pal(theData$Numbers), 
-                  fillOpacity = 0.9, 
+                  fillOpacity = 1, 
                   color = "#BDBDC3", 
-                  weight = 2,
+                  weight = 1,
                   popup = vejlerne_popup)  
   })
 
@@ -72,7 +72,6 @@ output$nfields <- renderValueBox({
     # Remove any existing legend, and only if the legend is
     # enabled, create a new one.
     proxy %>% clearControls()
-    if (input$legend) {
       # pal = colorQuantile("Blues", theData$Numbers, n = 10)
       pal = colorNumeric("Blues", theData$Numbers, na.color = "#FFFFFF") 
       proxy %>% addLegend(position = "bottomright",
@@ -80,7 +79,6 @@ output$nfields <- renderValueBox({
         values = ~Numbers
         # values = as.numeric(quantile(theData$Numbers, probs = seq(0, 1, .1), na.rm = TRUE))
       )
-    }
   })
 }
 
