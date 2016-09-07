@@ -9,7 +9,7 @@ ui <- bootstrapPage(
   absolutePanel(top = 10, right = 10,
     selectInput("year", "Year", choices=unique(bag$Year),
       selected = min(bag$Year)
-    )#,
-    #checkboxInput("legend", "Show legend", TRUE)
+    ),
+    checkboxInput("legend", "Show legend", TRUE)
   )
 )
