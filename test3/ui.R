@@ -2,7 +2,7 @@ library(shiny)
 library(leaflet)
 library(RColorBrewer)
 library(data.table)
-bag = fread("Data/snouter2.txt")
+bag = fread("Data/snouter3.txt")
 
 ui <- bootstrapPage(
   tags$style(type = "text/css", "html, body {width:100%;height:100%}"),

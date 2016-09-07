@@ -1,7 +1,7 @@
 library(shiny)
 library(leaflet)
 library(RColorBrewer)
-bag = read.table("Data/snouter2.txt", header = TRUE)
+bag = read.table("Data/snouter3.txt", header = TRUE)
 vejlerne = readOGR(dsn="Data", layer="Fields")
 names(vejlerne) =  "PolyRefNum"
 vejlerne = vejlerne[!vejlerne$PolyRefNum %in% c(134266, 136277,156216,163713,139680,141133),]
