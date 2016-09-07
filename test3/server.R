@@ -20,6 +20,11 @@ server <- function(input, output, session) {
     joinedDataset
   })
 
+  getData<-reactive({
+    # Subset based on user input:
+    bag[bag$scenario == input$scenario & bag$Species == input$species,]
+  })
+
   output$vejlerneMap <- renderLeaflet({
     # Use leaflet() here, and only include aspects of the map that
     # won't need to change dynamically (at least, not unless the
@@ -50,6 +55,15 @@ server <- function(input, output, session) {
                   weight = 2,
                   popup = vejlerne_popup)  
   })
+
+output$nfields <- renderValueBox({
+    theData = getData()
+    nfields = unique(theData$PolyRefNum)
+    valueBox(
+      value = length(nfields),
+      subtitle = "Marker med udbytte"
+    )
+})
 
   # Use a separate observer to recreate the legend as needed.
   observe({

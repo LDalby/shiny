@@ -14,6 +14,9 @@ ui <- bootstrapPage(
     selectInput("species", "Species", choices=unique(bag$Species),
       selected = 'Pinkfoot'
     ),
-    checkboxInput("legend", "Show legend", TRUE)
+    checkboxInput("legend", "Show legend", TRUE),
+
+    valueBoxOutput('nfields', width = NULL)
+
   )
 )
