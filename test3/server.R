@@ -27,7 +27,8 @@ server <- function(input, output, session) {
     # won't need to change dynamically (at least, not unless the
     # entire map is being torn down and recreated).
     leaflet() %>% addTiles() %>%
-      fitBounds(bb[1,1], bb[2,1], bb[1,2], bb[2,2])
+      fitBounds(bb[1,1], bb[2,1], bb[1,2], bb[2,2]) %>% 
+      addMarkers(data = cbind(9,57))
   })
 
   # Incremental changes to the map (in this case, replacing the
