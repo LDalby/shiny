@@ -6,6 +6,7 @@ vejlerne = readOGR(dsn="Data", layer="Fields")
 names(vejlerne) =  "PolyRefNum"
 vejlerne = vejlerne[!vejlerne$PolyRefNum %in% c(134266, 136277,156216,163713,139680,141133),]
 bb = bbox(vejlerne)
+roosts = readOGR(dsn = "Data", layer = 'Roosts')
 server <- function(input, output, session) {
 
   # Reactive expression for the data subsetted to what the user selected
@@ -26,9 +27,14 @@ server <- function(input, output, session) {
     # Use leaflet() here, and only include aspects of the map that
     # won't need to change dynamically (at least, not unless the
     # entire map is being torn down and recreated).
+    # Create a palette that maps factor levels to colors
+    # roostpal = colorFactor(c("navy", "red", "yellow"),
+    #                          domain = c("Greylag", "Barnacle", "Pinkfoot"))
     leaflet() %>% addTiles() %>%
       fitBounds(bb[1,1], bb[2,1], bb[1,2], bb[2,2]) %>% 
-      addMarkers(data = cbind(9,57))
+      # addCircleMarkers(data = roosts, popup = ~Species, color = ~roostpal(Species),
+      #   stroke = FALSE, fillOpacity = 0.5)
+      addMarkers(data = roosts, popup = ~Species)
   })
 
   # Incremental changes to the map (in this case, replacing the
