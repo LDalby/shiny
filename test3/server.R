@@ -1,10 +1,10 @@
 library(shiny)
 library(leaflet)
 library(RColorBrewer)
-bag = read.table("Data/snouter3.txt", header = TRUE)
+bag = read.table("Data/snouter4.txt", header = TRUE)
 vejlerne = readOGR(dsn="Data", layer="Fields")
-names(vejlerne) =  "PolyRefNum"
-vejlerne = vejlerne[!vejlerne$PolyRefNum %in% c(134266, 136277,156216,163713,139680,141133),]
+names(vejlerne) =  "Polyref"
+vejlerne = vejlerne[!vejlerne$Polyref %in% c(134266, 136277,156216,163713,139680,141133),]
 bb = bbox(vejlerne)
 roosts = readOGR(dsn = "Data", layer = 'Roosts')
 server <- function(input, output, session) {
@@ -14,13 +14,13 @@ server <- function(input, output, session) {
     # Copy the GIS data
     joinedDataset = vejlerne
     # Join the two datasets together
-    joinedDataset@data <- suppressWarnings(left_join(joinedDataset@data, getData(), by="PolyRefNum"))
+    joinedDataset@data <- suppressWarnings(left_join(joinedDataset@data, getData(), by="Polyref"))
     joinedDataset
   })
 
   getData<-reactive({
     # Subset based on user input:
-    bag[bag$scenario == input$scenario & bag$Species == input$species,]
+    bag[bag$Scenario == input$scenario & bag$Species == input$species & bag$Entity == input$entity,]
   })
 
   output$vejlerneMap <- renderLeaflet({
@@ -47,7 +47,7 @@ server <- function(input, output, session) {
     # pal <- colorQuantile("Blues", theData$Numbers, n = 10) 
     pal <- colorNumeric("Blues", theData$Numbers, na.color = "#FFFFFF") 
     # set text for the clickable popup labels
-    vejlerne_popup <- paste0("<strong>Numbers Shot: </strong>", 
+    vejlerne_popup <- paste0("<strong>", theData$Entity, ": </strong>", 
                             theData$Numbers)
     # If the data changes, the polygons are cleared and redrawn, however, the map (above) is not redrawn
     leafletProxy("vejlerneMap", data = theData) %>%
@@ -62,7 +62,7 @@ server <- function(input, output, session) {
 
 output$nfields <- renderValueBox({
     theData = getData()
-    nfields = unique(theData$PolyRefNum)
+    nfields = unique(theData$Polyref)
     valueBox(
       value = length(nfields),
       subtitle = "Marker med udbytte"
