@@ -1,7 +1,7 @@
 library(shiny)
 library(leaflet)
 library(RColorBrewer)
-bag = read.table("Data/snouter4.txt", header = TRUE)
+bag = read.table("Data/snouter4.txt", header = TRUE, stringsAsFactors = FALSE)
 vejlerne = readOGR(dsn="Data", layer="Fields")
 names(vejlerne) =  "Polyref"
 vejlerne = vejlerne[!vejlerne$Polyref %in% c(134266, 136277,156216,163713,139680,141133),]
@@ -65,7 +65,10 @@ output$nfields <- renderValueBox({
     nfields = unique(theData$Polyref)
     valueBox(
       value = length(nfields),
-      subtitle = "Marker med udbytte"
+      subtitle = switch(unique(theData$Entity),
+        "Udbytte" = "Marker med udbytte",
+        "Antal" = "Marker med gæs",
+        "foobar")
     )
 })
 
