@@ -57,7 +57,10 @@ server <- function(input, output, session) {
                   fillOpacity = 1, 
                   color = "#BDBDC3", 
                   weight = 1,
-                  popup = vejlerne_popup)  
+                  popup = vejlerne_popup) %>%
+        addLegend(position = "bottomright",
+                  pal = pal,
+                  values = ~Numbers)  
   })
 
 output$nfields <- renderValueBox({
@@ -73,20 +76,20 @@ output$nfields <- renderValueBox({
 })
 
   # Use a separate observer to recreate the legend as needed.
-  observe({
-    theData = getSpData()
-    proxy <- leafletProxy("vejlerneMap", data = theData)
-    # Remove any existing legend, and only if the legend is
-    # enabled, create a new one.
-    proxy %>% clearControls()
-      # pal = colorQuantile("Blues", theData$Numbers, n = 10)
-      pal = colorNumeric("Blues", theData$Numbers, na.color = "#FFFFFF") 
-      proxy %>% addLegend(position = "bottomright",
-        pal = pal,
-        values = ~Numbers
-        # values = as.numeric(quantile(theData$Numbers, probs = seq(0, 1, .1), na.rm = TRUE))
-      )
-  })
+  # observe({
+  #   theData = getSpData()
+  #   proxy <- leafletProxy("vejlerneMap", data = theData)
+  #   # Remove any existing legend, and only if the legend is
+  #   # enabled, create a new one.
+  #   proxy %>% clearControls()
+  #     # pal = colorQuantile("Blues", theData$Numbers, n = 10)
+  #     pal = colorNumeric("Blues", theData$Numbers, na.color = "#FFFFFF") 
+  #     proxy %>% addLegend(position = "bottomright",
+  #       pal = pal,
+  #       values = ~Numbers
+  #       # values = as.numeric(quantile(theData$Numbers, probs = seq(0, 1, .1), na.rm = TRUE))
+  #     )
+  # })
 }
 
 # shinyApp(ui, server)
