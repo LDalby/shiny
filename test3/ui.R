@@ -19,7 +19,9 @@ ui <- bootstrapPage(
     ),
     checkboxInput("roosts", "Vis rastepladser", TRUE),
 
-    valueBoxOutput('nfields', width = NULL)
+    valueBoxOutput('nfields', width = NULL),
+
+    valueBoxOutput('totalbag', width = NULL)
 
   )
 )

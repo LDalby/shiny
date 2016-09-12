@@ -77,6 +77,16 @@ output$nfields <- renderValueBox({
     )
 })
 
+output$totalbag <- renderValueBox({
+    theData = getData()
+    totalbag = totalbag[Scenario == unique(theData$Scenario) &
+                        Species == unique(theData$Species), mean]
+    valueBox(
+      value = totalbag,
+      subtitle = "Gns. totalt udbytte"
+    )
+})
+
   observe({
     theData = getSpData()
     proxy <- leafletProxy("vejlerneMap", data = theData)
