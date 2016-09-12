@@ -2,8 +2,8 @@ library(shiny)
 library(leaflet)
 library(RColorBrewer)
 library(data.table)
-bag = fread("Data/snouter4.txt")
-
+# bag = fread("Data/snouter4.txt")
+load('Data/bag.RData')
 ui <- bootstrapPage(
   tags$style(type = "text/css", "html, body {width:100%;height:100%}"),
   leafletOutput("vejlerneMap", width = "100%", height = "100%"),
@@ -17,6 +17,7 @@ ui <- bootstrapPage(
     selectInput("entity", "Entity", choices=unique(bag$Entity),
       selected = 'Udbytte'
     ),
+    checkboxInput("roosts", "Vis rastepladser", TRUE),
 
     valueBoxOutput('nfields', width = NULL)
 

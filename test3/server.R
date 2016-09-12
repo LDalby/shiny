@@ -1,12 +1,14 @@
 library(shiny)
 library(leaflet)
 library(RColorBrewer)
-bag = read.table("Data/snouter4.txt", header = TRUE, stringsAsFactors = FALSE)
-vejlerne = readOGR(dsn="Data", layer="Fields")
-names(vejlerne) =  "Polyref"
-vejlerne = vejlerne[!vejlerne$Polyref %in% c(134266, 136277,156216,163713,139680,141133),]
-bb = bbox(vejlerne)
-roosts = readOGR(dsn = "Data", layer = 'Roosts')
+# bag = read.table("Data/snouter4.txt", header = TRUE, stringsAsFactors = FALSE)
+# vejlerne = readOGR(dsn="Data", layer="Fields")
+# names(vejlerne) =  "Polyref"
+# vejlerne = vejlerne[!vejlerne$Polyref %in% c(134266, 136277,156216,163713,139680,141133),]
+# bb = bbox(vejlerne)
+# roosts = readOGR(dsn = "Data", layer = 'Roosts')
+load('Data/maps.RData')
+load('Data/bag.RData')
 server <- function(input, output, session) {
 
   # Reactive expression for the data subsetted to what the user selected
@@ -31,10 +33,9 @@ server <- function(input, output, session) {
     # roostpal = colorFactor(c("navy", "red", "yellow"),
     #                          domain = c("Greylag", "Barnacle", "Pinkfoot"))
     leaflet() %>% addTiles() %>%
-      fitBounds(bb[1,1], bb[2,1], bb[1,2], bb[2,2]) %>% 
+      fitBounds(bb[1,1], bb[2,1], bb[1,2], bb[2,2])# %>% 
       # addCircleMarkers(data = roosts, popup = ~Species, color = ~roostpal(Species),
-      #   stroke = FALSE, fillOpacity = 0.5)
-      addMarkers(data = roosts, popup = ~Species)
+     
   })
 
   # Incremental changes to the map (in this case, replacing the
@@ -58,6 +59,7 @@ server <- function(input, output, session) {
                   color = "#BDBDC3", 
                   weight = 1,
                   popup = vejlerne_popup) %>%
+      clearControls() %>%
         addLegend(position = "bottomright",
                   pal = pal,
                   values = ~Numbers)  
@@ -75,21 +77,18 @@ output$nfields <- renderValueBox({
     )
 })
 
-  # Use a separate observer to recreate the legend as needed.
-  # observe({
-  #   theData = getSpData()
-  #   proxy <- leafletProxy("vejlerneMap", data = theData)
-  #   # Remove any existing legend, and only if the legend is
-  #   # enabled, create a new one.
-  #   proxy %>% clearControls()
-  #     # pal = colorQuantile("Blues", theData$Numbers, n = 10)
-  #     pal = colorNumeric("Blues", theData$Numbers, na.color = "#FFFFFF") 
-  #     proxy %>% addLegend(position = "bottomright",
-  #       pal = pal,
-  #       values = ~Numbers
-  #       # values = as.numeric(quantile(theData$Numbers, probs = seq(0, 1, .1), na.rm = TRUE))
-  #     )
-  # })
+  observe({
+    theData = getSpData()
+    proxy <- leafletProxy("vejlerneMap", data = theData)
+    # Remove any existing markers, and only if the markers are
+    # enabled, create a new ones.
+    roostpop = paste0("<strong>Rasteplads for: </strong>", roosts$Species)
+    proxy %>% clearMarkers()
+      if(input$roosts) {
+      proxy %>% addMarkers(data = roosts,
+                           popup = roostpop)
+    }
+  })
 }
 
 # shinyApp(ui, server)
