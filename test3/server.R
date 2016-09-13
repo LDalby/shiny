@@ -20,7 +20,10 @@ server <- function(input, output, session) {
 
   getData<-reactive({
     # Subset based on user input:
-    bag[bag$Scenario == input$scenario & bag$Species == input$species & bag$Entity == input$entity,]
+    bag[bag$Scenario == input$scenario & 
+        bag$Species == input$species & 
+        bag$Entity == input$entity &
+        bag$SeasonNumber == input$year,]
   })
 
   output$vejlerneMap <- renderLeaflet({
@@ -71,10 +74,11 @@ output$nfields <- renderValueBox({
 output$totalbag <- renderValueBox({
     theData = getData()
     totalbag = totalbag[Scenario == unique(theData$Scenario) &
-                        Species == unique(theData$Species), mean]
+                        Species == unique(theData$Species) &
+                        SeasonNumber == unique(theData$SeasonNumber), TotalBag]
     valueBox(
       value = totalbag,
-      subtitle = "Gns. totalt udbytte"
+      subtitle = "Samlet udbytte"
     )
 })
 

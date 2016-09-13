@@ -14,6 +14,9 @@ ui <- bootstrapPage(
     selectInput("species", "Species", choices=unique(bag$Species),
       selected = 'Pinkfoot'
     ),
+    selectInput("year", "Year", choices=sort(unique(bag$SeasonNumber)),
+      selected = 1
+    ),
     selectInput("entity", "Entity", choices=unique(bag$Entity),
    	  selected = 'Udbytte'
     ),
