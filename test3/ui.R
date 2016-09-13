@@ -15,7 +15,7 @@ ui <- bootstrapPage(
       selected = 'Pinkfoot'
     ),
     selectInput("entity", "Entity", choices=unique(bag$Entity),
-      selected = 'Udbytte'
+   	  selected = 'Udbytte'
     ),
     checkboxInput("roosts", "Vis rastepladser", TRUE),
 
