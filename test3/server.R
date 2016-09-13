@@ -2,12 +2,13 @@ library(shiny)
 library(leaflet)
 library(RColorBrewer)
 library(rgdal)
-# library(dtplyr)
+library(viridis)
 library(dplyr)
 load('Data/maps.RData')
 load('Data/bag.RData')
 server <- function(input, output, session) {
-
+  
+  
   # Reactive expression for the data subsetted to what the user selected
   getSpData<-reactive({
     # Copy the GIS data
@@ -26,22 +27,17 @@ server <- function(input, output, session) {
     # Use leaflet() here, and only include aspects of the map that
     # won't need to change dynamically (at least, not unless the
     # entire map is being torn down and recreated).
-    # Create a palette that maps factor levels to colors
-    # roostpal = colorFactor(c("navy", "red", "yellow"),
-    #                          domain = c("Greylag", "Barnacle", "Pinkfoot"))
     leaflet() %>% addTiles() %>%
       fitBounds(bb[1,1], bb[2,1], bb[1,2], bb[2,2])
   })
 
-  # Incremental changes to the map (in this case, replacing the
-  # circles when a new color is chosen) should be performed in
-  # an observer. Each independent set of things that can change
-  # should be managed in its own observer.
+  # Incremental changes to the map:
  observe({
     theData<-getSpData() 
     # colour palette mapped to data
-    # pal <- colorQuantile("Blues", theData$Numbers, n = 10) 
-    pal <- colorNumeric("Blues", theData$Numbers, na.color = "#FFFFFF") 
+    # pal = colorNumeric(palette = "Blues", theData$Numbers, na.color = "#FFFFFF") 
+    ncol = length(unique(theData$Numbers))
+    pal = colorNumeric(palette = viridis(ncol), theData$Numbers, na.color = "#FFFFFF") 
     # set text for the clickable popup labels
     vejlerne_popup <- paste0("<strong>", theData$Entity, ": </strong>", 
                             theData$Numbers)
@@ -52,7 +48,7 @@ server <- function(input, output, session) {
                   fillColor = pal(theData$Numbers), 
                   fillOpacity = 1, 
                   color = "#BDBDC3", 
-                  weight = 1,
+                  weight = 0.5,
                   popup = vejlerne_popup) %>%
       clearControls() %>%
         addLegend(position = "bottomright",
@@ -95,5 +91,3 @@ output$totalbag <- renderValueBox({
     }
   })
 }
-
-# shinyApp(ui, server)
