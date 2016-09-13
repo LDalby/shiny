@@ -1,12 +1,9 @@
 library(shiny)
 library(leaflet)
 library(RColorBrewer)
-# bag = read.table("Data/snouter4.txt", header = TRUE, stringsAsFactors = FALSE)
-# vejlerne = readOGR(dsn="Data", layer="Fields")
-# names(vejlerne) =  "Polyref"
-# vejlerne = vejlerne[!vejlerne$Polyref %in% c(134266, 136277,156216,163713,139680,141133),]
-# bb = bbox(vejlerne)
-# roosts = readOGR(dsn = "Data", layer = 'Roosts')
+library(rgdal)
+# library(dtplyr)
+library(dplyr)
 load('Data/maps.RData')
 load('Data/bag.RData')
 server <- function(input, output, session) {
@@ -33,9 +30,7 @@ server <- function(input, output, session) {
     # roostpal = colorFactor(c("navy", "red", "yellow"),
     #                          domain = c("Greylag", "Barnacle", "Pinkfoot"))
     leaflet() %>% addTiles() %>%
-      fitBounds(bb[1,1], bb[2,1], bb[1,2], bb[2,2])# %>% 
-      # addCircleMarkers(data = roosts, popup = ~Species, color = ~roostpal(Species),
-     
+      fitBounds(bb[1,1], bb[2,1], bb[1,2], bb[2,2])
   })
 
   # Incremental changes to the map (in this case, replacing the

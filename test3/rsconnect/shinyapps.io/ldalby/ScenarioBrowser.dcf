@@ -1,0 +1,9 @@
+name: ScenarioBrowser
+account: ldalby
+server: shinyapps.io
+appId: 125405
+bundleId: 556214
+url: https://ldalby.shinyapps.io/ScenarioBrowser/
+when: 1473760506.25989
+asMultiple: FALSE
+asStatic: FALSE
