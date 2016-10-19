@@ -29,28 +29,28 @@ server <- function(input, output, session) {
   getSpData<-reactive({
     # Return a subset based on user input:
     tmp = fields[, input$fieldseason]
-    names(tmp) = "values"
+    names(tmp) = "Cover"
     tmp
   })
   # Incremental changes to the map:
  observe({
     theData<-getSpData() 
     # colour palette mapped to data
-    pal = colorFactor(palette = "Set1", theData$values, na.color = "#FFFFFF") 
+    pal = colorFactor(palette = "Set1", theData$Cover, na.color = "#FFFFFF") 
     # # set text for the clickable popup labels
-    # vejlerne_popup <- paste0("<strong>", theData$Entity, ": </strong>", 
-    #                         theData$Numbers)
+    fields_popup <- paste0("<strong>", "Cover: ", ": </strong>",
+                            theData$Cover)
     # # If the data changes, the polygons are cleared and redrawn, however, the map (above) is not redrawn
     leafletProxy("hjortkaerMap", data = theData) %>%
       clearShapes() %>%
-      addPolygons(fillColor = pal(theData$values),
+      addPolygons(fillColor = pal(theData$Cover),
                   fillOpacity = 1, 
                   color = "#BDBDC3", 
                   weight = 0.5)  %>%
       clearControls() %>%
         addLegend(position = "bottomright",
                   pal = pal,
-                  values = ~values)  
+                  values = ~Cover)  
       
   })
 }
