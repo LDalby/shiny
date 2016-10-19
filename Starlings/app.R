@@ -29,7 +29,7 @@ server <- function(input, output, session) {
   getSpData<-reactive({
     # Return a subset based on user input:
     tmp = fields[, input$fieldseason]
-    names(tmp)
+    names(tmp) = "values"
     tmp
   })
   # Incremental changes to the map:
