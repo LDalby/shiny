@@ -41,7 +41,7 @@ server <- function(input, output, session) {
     # vejlerne_popup <- paste0("<strong>", theData$Entity, ": </strong>", 
     #                         theData$Numbers)
     # # If the data changes, the polygons are cleared and redrawn, however, the map (above) is not redrawn
-    leafletProxy("hjortkaerMap", data = fields) %>%
+    leafletProxy("hjortkaerMap", data = theData) %>%
       clearShapes() %>%
       addPolygons(fillColor = pal(theData$values),
                   fillOpacity = 1, 
