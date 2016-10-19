@@ -47,8 +47,7 @@ server <- function(input, output, session) {
     # If the data changes, the polygons are cleared and redrawn, however, the map (above) is not redrawn
     leafletProxy("vejlerneMap", data = theData) %>%
       clearShapes() %>%
-      addPolygons(data = theData,
-                  fillColor = pal(theData$Numbers), 
+      addPolygons(fillColor = pal(theData$Numbers), 
                   fillOpacity = 1, 
                   color = "#BDBDC3", 
                   weight = 0.5,
