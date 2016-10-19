@@ -1,4 +1,4 @@
-#
+# App for visualization of the Starling project.
 #
 library(shiny)
 library(shinydashboard)
