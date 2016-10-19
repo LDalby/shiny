@@ -13,7 +13,8 @@ ui <- bootstrapPage(
     selectInput("fieldseason", "Field season", choices=c("Crop2015", "Crop2016Early", "Crop2016Late")),
       selected = 1
     ),
-    checkboxInput("availgrid", "Show availibity grid", FALSE)
+    checkboxInput("availgrid", "Show availibity grid", FALSE),
+    checkboxInput("ringingsite", "Show ringing site", TRUE)
   )
 
 
@@ -54,6 +55,19 @@ server <- function(input, output, session) {
                   values = ~Cover)  
       
   })
+ 
+ observe({
+   theData<-getSpData()
+   proxy <- leafletProxy("hjortkaerMap", data = theData)
+   # Remove any existing markers, and only if the markers are
+   # enabled, create a new ones.
+   proxy %>% clearMarkers()
+   if(input$ringingsite) {
+     proxy %>% addMarkers(data = ringingsite,
+                          popup = "Ringing site")
+   }
+ })
+ 
 }
 
 # Run the application 
