@@ -38,7 +38,7 @@ server <- function(input, output, session) {
     # colour palette mapped to data
     pal = colorFactor(palette = "Set1", theData$Cover, na.color = "#FFFFFF") 
     # # set text for the clickable popup labels
-    fields_popup <- paste0("<strong>", "Cover: ", ": </strong>",
+    fields_popup <- paste0("<strong>", "Cover", ": </strong>",
                             theData$Cover)
     # # If the data changes, the polygons are cleared and redrawn, however, the map (above) is not redrawn
     leafletProxy("hjortkaerMap", data = theData) %>%
@@ -46,7 +46,8 @@ server <- function(input, output, session) {
       addPolygons(fillColor = pal(theData$Cover),
                   fillOpacity = 1, 
                   color = "#BDBDC3", 
-                  weight = 0.5)  %>%
+                  weight = 0.5,
+                  popup = fields_popup)  %>%
       clearControls() %>%
         addLegend(position = "bottomright",
                   pal = pal,
