@@ -69,6 +69,21 @@ server <- function(input, output, session) {
    }
  })
  
+observe({
+   theData<-getSpData()
+   proxy <- leafletProxy("hjortkaerMap", data = theData)
+   # Remove any existing markers, and only if the markers are
+   # enabled, create a new ones.
+   if(input$availgrid) {
+     proxy %>% addCircles(data = newavll,
+                          radius = 2,
+                          fillColor = 'black',
+                          fillOpacity = 0.8,
+                          stroke = FALSE,
+                          popup = "Availibity point")
+   }
+ })
+
 }
 
 # Run the application 
