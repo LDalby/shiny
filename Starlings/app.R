@@ -5,6 +5,7 @@ library(shinydashboard)
 library(leaflet)
 library(data.table)
 load('Data/fields.RData')
+load('Data/starlings.RData')
 
 ui <- bootstrapPage(
   tags$style(type = "text/css", "html, body {width:100%;height:100%}"),
@@ -12,6 +13,9 @@ ui <- bootstrapPage(
   absolutePanel(top = 10, right = 10,
     selectInput("fieldseason", "Field season", choices=c("Crop2015", "Crop2016Early", "Crop2016Late"),
       selected = "Crop2015"
+    ),
+    selectInput("bird", "Bird", choices=sort(unique(spstarlings$LoggerID)),
+      selected = "S1"
     ),
     checkboxInput("availgrid", "Show availibity grid", FALSE),
     checkboxInput("ringingsite", "Show ringing site", TRUE)
@@ -34,6 +38,12 @@ server <- function(input, output, session) {
     names(tmp) = "Cover"
     tmp
   })
+
+  getBirdData<-reactive({
+    # Return a subset based on user input:
+    spstarlings[spstarlings$LoggerID == input$bird,]
+  })
+
   # Incremental changes to the map:
  observe({
     theData<-getSpData() 
@@ -56,6 +66,18 @@ server <- function(input, output, session) {
                   values = ~Cover)  
       
   })
+
+ observe({
+   theData<-getSpData()
+   bird = getBirdData()
+   proxy <- leafletProxy("hjortkaerMap", data = theData)
+   # Remove any existing markers, and only if the markers are
+   # enabled, create a new ones.
+   # proxy %>% clearShapes()
+     proxy %>% addCircles(data = bird,
+                           radius = 1
+                          )
+ })
  
  observe({
    theData<-getSpData()
