@@ -8,7 +8,6 @@ load('Data/maps.RData')
 load('Data/bag.RData')
 server <- function(input, output, session) {
   
-  
   # Reactive expression for the data subsetted to what the user selected
   getSpData<-reactive({
     # Copy the GIS data

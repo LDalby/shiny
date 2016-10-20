@@ -10,12 +10,13 @@ ui <- bootstrapPage(
   tags$style(type = "text/css", "html, body {width:100%;height:100%}"),
   leafletOutput("hjortkaerMap", width = "100%", height = "100%"),
   absolutePanel(top = 10, right = 10,
-    selectInput("fieldseason", "Field season", choices=c("Crop2015", "Crop2016Early", "Crop2016Late")),
-      selected = 1
+    selectInput("fieldseason", "Field season", choices=c("Crop2015", "Crop2016Early", "Crop2016Late"),
+      selected = "Crop2015"
     ),
     checkboxInput("availgrid", "Show availibity grid", FALSE),
     checkboxInput("ringingsite", "Show ringing site", TRUE)
   )
+)
 
 
 server <- function(input, output, session) {
