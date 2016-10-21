@@ -7,11 +7,18 @@ library(data.table)
 load('Data/fields.RData')
 load('Data/starlings.RData')
 
+# Choices for drop-down
+vars <- c(
+  "2015" = "Crop2015",
+  "2016Early" = "Crop2016Early",
+  "2016Late" = "Crop2016Late"
+)
+
 ui <- bootstrapPage(
   tags$style(type = "text/css", "html, body {width:100%;height:100%}"),
   leafletOutput("hjortkaerMap", width = "100%", height = "100%"),
   absolutePanel(top = 10, right = 10,
-    selectInput("fieldseason", "Field season", choices=c("Crop2015", "Crop2016Early", "Crop2016Late"),
+    selectInput("fieldseason", "Field season", choices= vars,
       selected = "Crop2015"
     ),
     selectInput("bird", "Bird", choices=sort(unique(spstarlings$LoggerID)),
@@ -73,7 +80,14 @@ server <- function(input, output, session) {
    proxy %>% clearMarkers()
    # Add bird fix points:
    bird = getBirdData()
-   proxy %>% addCircleMarkers(data = bird, radius = 1)
+   date = paste0("<strong>", "Date", ": </strong>", bird$Date)
+   alt = paste0("<strong>", "Altitude", ": </strong>", bird$Alt)
+   speed = paste0("<strong>", "Speed", ": </strong>", bird$Speed)
+   dist = paste0("<strong>", "Distance", ": </strong>", round(bird$Dist))
+   fixpop = paste(sep = "<br/>", date, alt, speed, dist)
+   proxy %>% addCircleMarkers(data = bird,
+                              radius = 1,
+                              popup = fixpop)
    # Show ringing site:
    if(input$ringingsite) {
      proxy %>% addMarkers(data = ringingsite,
