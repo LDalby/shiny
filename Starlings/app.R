@@ -14,10 +14,14 @@ vars <- c(
   "2016Late" = "Crop2016Late"
 )
 
-ui <- bootstrapPage(
-  tags$style(type = "text/css", "html, body {width:100%;height:100%}"),
+ui <- navbarPage("Starlings", id = "nav",
+  tabPanel("Map", 
+      div(class="outer",
+      tags$style(type = "text/css", "html, body {width:100%;height:100%}"),
   leafletOutput("hjortkaerMap", width = "100%", height = "100%"),
-  absolutePanel(top = 10, right = 10,
+  absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
+        draggable = TRUE, top = 60, left = "auto", right = 20, bottom = "auto",
+        width = 330, height = "auto",
     selectInput("fieldseason", "Field season", choices= vars,
       selected = "Crop2015"
     ),
@@ -26,7 +30,9 @@ ui <- bootstrapPage(
     ),
     checkboxInput("availgrid", "Show availibity grid", FALSE),
     checkboxInput("ringingsite", "Show ringing site", TRUE)
-  )
+         )
+      )
+   )
 )
 
 server <- function(input, output, session) {
