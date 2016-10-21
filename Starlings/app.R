@@ -89,14 +89,6 @@ server <- function(input, output, session) {
      proxy %>% addMarkers(data = ringingsite,
                           popup = "Ringing site")
    }
- })
- 
-observe({
-   theData<-getSpData()
-   proxy <- leafletProxy("hjortkaerMap", data = theData)
-   # Remove any existing markers, and only if the markers are
-   # enabled, create a new ones.
-   proxy %>% clearMarkers()
    if(input$availgrid) {
      proxy %>% addCircleMarkers(data = newavll,
                           radius = 2,
@@ -107,7 +99,7 @@ observe({
                           )
    }
  })
-
+ 
 }
 
 # Run the application 
