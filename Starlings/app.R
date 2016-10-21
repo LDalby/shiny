@@ -13,6 +13,9 @@ vars <- c(
   "2016Early" = "Crop2016Early",
   "2016Late" = "Crop2016Late"
 )
+loggers2015 <- c("S4a", "S9a")
+Earlyloggers2016 <- c("S20", "S21") 
+Lateloggers2016 <- c("S1", "S15")
 
 ui <- bootstrapPage(
   tags$style(type = "text/css", "html, body {width:100%;height:100%}"),
@@ -21,9 +24,24 @@ ui <- bootstrapPage(
     selectInput("fieldseason", "Field season", choices= vars,
       selected = "Crop2015"
     ),
-    selectInput("bird", "Bird", choices=sort(unique(spstarlings$LoggerID)),
+    conditionalPanel("input.fieldseason == 'Crop2015'",
+          # Only show the loggers that were deployed in that season:
+          selectInput("bird", "Bird", choices=sort(loggers2015),
+      selected = "S4a"
+    )),
+    conditionalPanel("input.fieldseason == 'Crop2016Early'",
+          # Only show the loggers that were deployed in that season:
+          selectInput("bird", "Bird", choices=sort(Earlyloggers2016),
+      selected = "S20"
+    )),
+    conditionalPanel("input.fieldseason == 'Crop2016Late'",
+          # Only show the loggers that were deployed in that season:
+          selectInput("bird", "Bird", choices=sort(Lateloggers2016),
       selected = "S1"
-    ),
+    )),
+    # selectInput("bird", "Bird", choices=sort(unique(spstarlings$LoggerID)),
+    #   selected = "S1"
+    # ),
     checkboxInput("availgrid", "Show availibity grid", FALSE),
     checkboxInput("ringingsite", "Show ringing site", TRUE)
   )
@@ -61,6 +79,7 @@ server <- function(input, output, session) {
     # # If the data changes, the polygons are cleared and redrawn, however, the map (above) is not redrawn
     leafletProxy("hjortkaerMap", data = theData) %>%
       clearShapes() %>%
+      clearMarkers() %>%
       addPolygons(fillColor = pal(theData$Cover),
                   fillOpacity = 0.9, 
                   color = "#BDBDC3", 
@@ -73,25 +92,27 @@ server <- function(input, output, session) {
   })
 
  observe({
-   theData<-getSpData()
-   proxy <- leafletProxy("hjortkaerMap", data = theData)
+   # theData<-getSpData()
+   bird = getBirdData()
+   proxy <- leafletProxy("hjortkaerMap", data = bird)
    # Remove any existing markers, and only if the markers are
    # enabled, create a new ones.
-   proxy %>% clearMarkers()
    # Add bird fix points:
-   bird = getBirdData()
    date = paste0("<strong>", "Date", ": </strong>", bird$Date)
    alt = paste0("<strong>", "Altitude", ": </strong>", bird$Alt)
    speed = paste0("<strong>", "Speed", ": </strong>", bird$Speed)
    dist = paste0("<strong>", "Distance", ": </strong>", round(bird$Dist))
    fixpop = paste(sep = "<br/>", date, alt, speed, dist)
-   proxy %>% addCircleMarkers(data = bird,
+   proxy %>% 
+            clearMarkers() %>%
+            addCircleMarkers(data = bird,
                               radius = 1,
                               popup = fixpop)
    # Show ringing site:
    if(input$ringingsite) {
      proxy %>% addMarkers(data = ringingsite,
-                          popup = "Ringing site")
+                          popup = "Ringing site",
+                          layerId = 'RS')
    }
    # Show availability grid:
    if(input$availgrid) {
