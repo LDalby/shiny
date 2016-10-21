@@ -22,7 +22,6 @@ ui <- bootstrapPage(
   )
 )
 
-
 server <- function(input, output, session) {
   output$hjortkaerMap <- renderLeaflet({
     # Use leaflet() here, and only include aspects of the map that
@@ -56,7 +55,7 @@ server <- function(input, output, session) {
     leafletProxy("hjortkaerMap", data = theData) %>%
       clearShapes() %>%
       addPolygons(fillColor = pal(theData$Cover),
-                  fillOpacity = 1, 
+                  fillOpacity = 0.9, 
                   color = "#BDBDC3", 
                   weight = 0.5,
                   popup = fields_popup)  %>%
@@ -64,31 +63,23 @@ server <- function(input, output, session) {
         addLegend(position = "bottomright",
                   pal = pal,
                   values = ~Cover)  
-      
   })
 
- observe({
-   theData<-getSpData()
-   bird = getBirdData()
-   proxy <- leafletProxy("hjortkaerMap", data = theData)
-   # Remove any existing markers, and only if the markers are
-   # enabled, create a new ones.
-   # proxy %>% clearShapes()
-     proxy %>% addCircles(data = bird,
-                           radius = 1
-                          )
- })
- 
  observe({
    theData<-getSpData()
    proxy <- leafletProxy("hjortkaerMap", data = theData)
    # Remove any existing markers, and only if the markers are
    # enabled, create a new ones.
    proxy %>% clearMarkers()
+   # Add bird fix points:
+   bird = getBirdData()
+   proxy %>% addCircleMarkers(data = bird, radius = 1)
+   # Show ringing site:
    if(input$ringingsite) {
      proxy %>% addMarkers(data = ringingsite,
                           popup = "Ringing site")
    }
+   # Show availability grid:
    if(input$availgrid) {
      proxy %>% addCircleMarkers(data = newavll,
                           radius = 2,
@@ -99,9 +90,7 @@ server <- function(input, output, session) {
                           )
    }
  })
- 
 }
-
 # Run the application 
 shinyApp(ui = ui, server = server)
 
