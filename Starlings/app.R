@@ -14,8 +14,6 @@ vars <- c(
   "2016Late" = "Crop2016Late"
 )
 
-
-
 ui <- bootstrapPage(
   tags$style(type = "text/css", "html, body {width:100%;height:100%}"),
   leafletOutput("hjortkaerMap", width = "100%", height = "100%"),
@@ -39,6 +37,7 @@ server <- function(input, output, session) {
       'Crop2016Early' = c("S17", "S21"),
       'Crop2016Late' = c("S1", "S15"))
   })
+  # Update the selectinput with based on getBirdChoices
   observe({
      choices = getBirdChoices()
      updateSelectInput(session, "bird", 
