@@ -14,6 +14,8 @@ vars <- c(
   "2016Late" = "Crop2016Late"
 )
 
+
+
 ui <- bootstrapPage(
   tags$style(type = "text/css", "html, body {width:100%;height:100%}"),
   leafletOutput("hjortkaerMap", width = "100%", height = "100%"),
@@ -30,6 +32,20 @@ ui <- bootstrapPage(
 )
 
 server <- function(input, output, session) {
+  getBirdChoices<-reactive({
+    # Get the right group of birds for the selected season
+    switch(input$fieldseason, 
+      'Crop2015' = c("S4a", "S9a"),
+      'Crop2016Early' = c("S17", "S21"),
+      'Crop2016Late' = c("S1", "S15"))
+  })
+  observe({
+     choices = getBirdChoices()
+     updateSelectInput(session, "bird", 
+                        choices = choices,
+                        selected = choices[1])
+  })
+
   output$hjortkaerMap <- renderLeaflet({
     # Use leaflet() here, and only include aspects of the map that
     # won't need to change dynamically (at least, not unless the
@@ -49,6 +65,7 @@ server <- function(input, output, session) {
     # Return a subset based on user input:
     spstarlings[spstarlings$LoggerID == input$bird,]
   })
+
 
   # Incremental changes to the map:
  observe({
