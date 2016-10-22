@@ -24,7 +24,7 @@ ui <- navbarPage("Starlings", id = "nav",
       leafletOutput("hjortkaerMap", height = "100%", width = "100%"),
       absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
        draggable = TRUE, top = 60, left = "auto", right = 20, bottom = "auto",
-       width = 330, height = "auto",
+       width = "auto", height = "auto",
        selectInput("fieldseason", "Field season", choices= vars,
          selected = "Crop2015"
          ),
