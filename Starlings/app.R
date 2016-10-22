@@ -15,25 +15,25 @@ vars <- c(
 )
 
 ui <- navbarPage("Starlings", id = "nav",
-  tabPanel("Map", 
-      div(class="outer",
+ tabPanel("Map", 
+   div(class="outer",
       tags$style(type = "text/css", "html, body {width:100%;height:100%}"),
-  leafletOutput("hjortkaerMap", width = "100%", height = "100%"),
-  absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
-        draggable = TRUE, top = 60, left = "auto", right = 20, bottom = "auto",
-        width = 330, height = "auto",
-    selectInput("fieldseason", "Field season", choices= vars,
-      selected = "Crop2015"
-    ),
-    selectInput("bird", "Bird", choices=sort(unique(spstarlings$LoggerID)),
-      selected = "S1"
-    ),
-    checkboxInput("availgrid", "Show availibity grid", FALSE),
-    checkboxInput("ringingsite", "Show ringing site", TRUE)
-         )
+      leafletOutput("hjortkaerMap"),
+      absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
+       draggable = TRUE, top = 60, left = "auto", right = 20, bottom = "auto",
+       width = 330, height = "auto",
+       selectInput("fieldseason", "Field season", choices= vars,
+         selected = "Crop2015"
+         ),
+       selectInput("bird", "Bird", choices=sort(unique(spstarlings$LoggerID)),
+         selected = "S1"
+         ),
+       checkboxInput("availgrid", "Show availibity grid", FALSE),
+       checkboxInput("ringingsite", "Show ringing site", TRUE)
+       )
       )
    )
-)
+ )
 
 server <- function(input, output, session) {
   getBirdChoices<-reactive({
