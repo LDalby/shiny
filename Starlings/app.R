@@ -3,9 +3,11 @@
 library(shiny)
 library(shinydashboard)
 library(leaflet)
+library(DT)
 library(data.table)
 load('Data/fields.RData')
 load('Data/starlings.RData')
+load('Data/data.RData')
 
 # Choices for drop-down
 vars <- c(
@@ -35,6 +37,21 @@ ui <- navbarPage("Starlings", id = "nav",
        checkboxInput("ringingsite", "Show ringing site", TRUE)
        )
       )
+   ),
+ tabPanel("Data",
+          fluidPage(
+            titlePanel('Download data'),
+            sidebarLayout(
+              sidebarPanel(
+                downloadButton('downloadData', 'Download')
+              ),
+              mainPanel(
+                fluidRow(
+                  DT::dataTableOutput("table")
+                )
+              )
+            )
+          )
    )
  )
 
@@ -129,6 +146,17 @@ server <- function(input, output, session) {
                           )
    }
  })
+ 
+ output$table <- DT::renderDataTable(DT::datatable({
+   data = starlings
+ }))
+ 
+ output$downloadData <- downloadHandler(
+   filename = "Starlings.txt",
+   content = function(file) {
+     write.table(starlings, file, row.names = FALSE, quote = FALSE, sep = '\t')
+   }
+ )
 }
 # Run the application 
 shinyApp(ui = ui, server = server)
