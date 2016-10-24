@@ -26,7 +26,7 @@ ui <- navbarPage("Starlings", id = "nav",
       leafletOutput("hjortkaerMap", height = "100%", width = "100%"),
       absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
        draggable = TRUE, top = 60, left = "auto", right = 20, bottom = "auto",
-       width = "auto", height = "auto",
+       width = 200, height = "auto",
        selectInput("fieldseason", "Field season", choices= vars,
          selected = "Crop2015"
          ),
@@ -59,7 +59,7 @@ server <- function(input, output, session) {
   getBirdChoices<-reactive({
     # Get the right group of birds for the selected season
     switch(input$fieldseason, 
-      'Crop2015' = c("S1-2015", "S10-2015" "S2-2015", "S3-2015", "S5-2015", "S7-2015", "S8-2015", "S9-2015"),
+      'Crop2015' = c("S1-2015", "S10-2015", "S2-2015", "S3-2015", "S5-2015", "S7-2015", "S8-2015", "S9-2015"),
       'Crop2016Early' = c( "S15-2016", "S14-2016", "S24-2016", "S13-2016", "S17-2016", "S4a-2016", "S11-2016", "S9a-2016", "S12-2016", "S1-2016"),
       'Crop2016Late' = c( "S21-2016", "S4b-2016", "S9b-2016", "S23-2016", "S16-2016"))
   })
