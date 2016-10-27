@@ -123,11 +123,13 @@ server <- function(input, output, session) {
    proxy %>% clearMarkers()
    # Add bird fix points:
    bird = getBirdData()
+   birdid = paste0("<strong>", "LoggerID", ": </strong>", bird$LoggerID)
    date = paste0("<strong>", "Date", ": </strong>", bird$Date)
    alt = paste0("<strong>", "Altitude", ": </strong>", bird$Alt)
    speed = paste0("<strong>", "Speed", ": </strong>", bird$Speed)
    dist = paste0("<strong>", "Distance", ": </strong>", round(bird$Dist))
-   fixpop = paste(sep = "<br/>", date, alt, speed, dist)
+   sex = paste0("<strong>", "Sex", ": </strong>", bird$Sex)
+   fixpop = paste(sep = "<br/>", birdid, sex, date, alt, speed, dist)
    proxy %>% addCircleMarkers(data = bird,
                               radius = 1,
                               popup = fixpop)
