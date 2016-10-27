@@ -59,9 +59,9 @@ server <- function(input, output, session) {
   getBirdChoices<-reactive({
     # Get the right group of birds for the selected season
     switch(input$fieldseason, 
-      'Crop2015' = c("S1-2015", "S10-2015", "S2-2015", "S3-2015", "S5-2015", "S7-2015", "S8-2015", "S9-2015"),
+      'Crop2015' = c("S10-2015", "S2-2015", "S3-2015", "S5-2015", "S7-2015", "S8-2015", "S9-2015"),
       'Crop2016Early' = c( "S14-2016", "S13-2016", "S17-2016", "S4a-2016", "S11-2016", "S9a-2016", "S12-2016", "S1-2016"),
-      'Crop2016Late' = c( "S21-2016", "S4b-2016", "S9b-2016"))  # 21 is second clutch.
+      'Crop2016Late' = c( "S4b-2016", "S9b-2016"))
   })
   # Update the selectinput with based on getBirdChoices
   observe({
@@ -81,8 +81,8 @@ server <- function(input, output, session) {
 # Reactive expression for the data subsetted to what the user selected
   getSpData<-reactive({
     # Return a subset based on user input:
-    tmp = fields[, input$fieldseason]
-    names(tmp) = "Cover"
+    tmp = fields[, c(input$fieldseason, "PolyID")]
+    names(tmp) = c("Cover", "PolyID")
     tmp
   })
 
@@ -98,8 +98,9 @@ server <- function(input, output, session) {
     # colour palette mapped to data
     pal = colorFactor(palette = "Set1", theData$Cover, na.color = "#FFFFFF") 
     # # set text for the clickable popup labels
-    fields_popup <- paste0("<strong>", "Cover", ": </strong>",
-                            theData$Cover)
+    coverpop = paste0("<strong>", "Cover", ": </strong>", theData$Cover)
+    idpop = paste0("<strong>", "ID", ": </strong>", theData$PolyID)
+    fields_popup <- paste(coverpop, idpop, sep = "<br/>")
     # # If the data changes, the polygons are cleared and redrawn, however, the map (above) is not redrawn
     leafletProxy("hjortkaerMap", data = theData) %>%
       clearShapes() %>%
