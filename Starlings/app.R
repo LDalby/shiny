@@ -151,7 +151,7 @@ server <- function(input, output, session) {
  })
  
  output$table <- DT::renderDataTable(DT::datatable({
-   data = starlings[!Cover %in% c('Forest', 'Garden', 'Building'),]
+   data = starlings
  }))
  
  output$downloadData <- downloadHandler(
