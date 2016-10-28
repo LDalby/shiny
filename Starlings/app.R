@@ -5,6 +5,7 @@ library(shinydashboard)
 library(leaflet)
 library(DT)
 library(data.table)
+library(ggplot2)
 load('Data/fields.RData')
 load('Data/starlings.RData')
 load('Data/data.RData')
@@ -26,7 +27,7 @@ ui <- navbarPage("Starlings", id = "nav",
       leafletOutput("hjortkaerMap", height = "100%", width = "100%"),
       absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
        draggable = TRUE, top = 60, left = "auto", right = 20, bottom = "auto",
-       width = 200, height = "auto",
+       width = 300, height = "auto",
        selectInput("fieldseason", "Field season", choices= vars,
          selected = "Crop2015"
          ),
@@ -34,7 +35,9 @@ ui <- navbarPage("Starlings", id = "nav",
          selected = "S1"
          ),
        checkboxInput("availgrid", "Show availibity grid", FALSE),
-       checkboxInput("ringingsite", "Show ringing site", TRUE)
+       checkboxInput("ringingsite", "Show ringing site", TRUE),
+       plotOutput('distDensity', height = 300),
+       plotOutput('coverDensity', height = 300)
        )
       )
    ),
@@ -91,6 +94,10 @@ server <- function(input, output, session) {
     spstarlings[spstarlings$LoggerID == input$bird,]
   })
 
+ getAvailabilityData<-reactive({
+    # Return a subset based on user input:
+    starlings[LoggerID == input$bird & Response == 0 & Dist <= 1000,]
+  })
 
   # Incremental changes to the map:
  observe({
@@ -110,7 +117,7 @@ server <- function(input, output, session) {
                   weight = 0.5,
                   popup = fields_popup)  %>%
       clearControls() %>%
-        addLegend(position = "bottomright",
+        addLegend(position = "bottomleft",
                   pal = pal,
                   values = ~Cover)  
   })
@@ -148,8 +155,28 @@ server <- function(input, output, session) {
                           popup = "Availibity point"
                           )
    }
+   output$distDensity <- renderPlot({
+     ggplot(bird@data, aes(Dist)) + 
+      geom_density(fill = "Steelblue1") +
+      xlim(0,1000) + xlab("Distance (m)") +
+      ylab("Density") + 
+      ggtitle("Density of observations")
+  })
  })
- 
+
+
+observe({
+output$coverDensity <- renderPlot({
+       ggplot(getAvailabilityData(), aes(Dist, ..count.., fill = Cover)) +
+       geom_density(position = 'fill') +
+       scale_fill_brewer(palette = "Set1") +
+       xlab("Distance (m)") +
+       ylab("Count") + 
+       ggtitle("Distribution of resources") + 
+       theme(legend.position="none")
+  }) 
+ })
+
  output$table <- DT::renderDataTable(DT::datatable({
    data = starlings
  }))
